@@ -13,6 +13,11 @@ q2A = [[1, 2, 2],
      [3, -2, 1],
      [2, 1, -1]]
 
+##User-Entered Example (Equation Coefficients)
+q3A = [[0, 0, 0],
+     [0, 0, 0],
+     [0, 0, 0]]
+
 ###Original Potential of B (remaining equation constants)
 ##Assignment Example
 q1B = [[10],
@@ -23,6 +28,11 @@ q1B = [[10],
 q2B = [[5],
      [-6],
      [-1]]
+
+##User-Entered Example (Equation Constants)
+q3B = [[0],
+     [0],
+     [0]]
 
 ###Matrices that will be manipulated during runtime
 ##Original Matrix A
@@ -63,16 +73,20 @@ Z = [[0],
 def Main():
     print("Linear Algebra Solver")
     print("The solver uses the MCAD method to reach a solution by finding the inverse\n of the original coefficients. \n")
-
-    if userConfirm("Select question to solve.\nEnter 1 for Example Posed or 2 for Alternative Example: ") == 1:
+    print("NB: If you have entered your own matrices in q3A and q3B you may enter '3'\nto solve these matrices.\n")
+    selection = userConfirm("Select question to solve.\nEnter 1 for Example Posed or 2 for Alternative Example: ")
+    if selection == 1:
         AOrg = q1A
         B = q1B
-    else:
+    elif selection == 2:
         AOrg = q2A
         B = q2B
+    elif selection == 3:
+        AOrg = q3A
+        B = q3B
         
     if (calcDet3x3(AOrg) == 0):
-        print("The matrix is singular. Therefore, the matrix not invertable, seek alternate method.")
+        print("\nThe matrix is singular. Therefore, the matrix not invertable, seek alternate method.")
         end()
     else:
         print("\n--Program Start--\n")
@@ -192,8 +206,10 @@ def userConfirm(question): #Require the user to select a question to solve
         return int(reply[0])
     if reply[0] == '2':
         return int(reply[0])
+    if reply[0] == '3':
+        return int(reply[0])
     else:
-        return userConfirm("Please confirm using 1 or 2.")
+        return userConfirm("Please confirm using 1, 2 or 3.")
 
 #Cleanly closes the process and restarts the python shell
 def end():
