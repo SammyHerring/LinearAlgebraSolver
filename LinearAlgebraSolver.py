@@ -1,8 +1,7 @@
 import sys
-import numpy as np
-#Linear Algebra Solver using MCAD Method
+###Linear Algebra Solver using MCAD Method
 
-#Origninal Input Value of A
+###Origninal Input Value of A (coefficients of x, y, z)
 ##Assignment Example
 AOrg = [[-1, 0, 2],
      [0, 1, -4],
@@ -13,7 +12,19 @@ AOrg = [[-1, 0, 2],
 ##     [3, -2, 1],
 ##     [2, 1, -1]]
 
-#Manipulated A Matrix Result
+###Original Value of B (remaining equation constants)
+##Assignment Example
+B = [[10],
+     [-9],
+     [15]]
+
+##Alternative Example
+##B = [[5],
+##     [-6],
+##     [1]]
+
+###Matrices that will be manipulated during runtime
+##Manipulated A Matrix Results
 #Matrix of Minors Step
 Am = [[0, 0, 0],
      [0, 0, 0],
@@ -29,16 +40,10 @@ At = [[0, 0, 0],
      [0, 0, 0],
      [0, 0, 0]]
 
-#Original Result Value of B
-##Assignment Example
-B = [[10],
-     [-9],
-     [15]]
-
-##Alternative Example
-##B = [[5],
-##     [-6],
-##     [1]]
+#Matrix Multiplyed by Interger (1/Determinant) Step
+Ai = [[0, 0, 0],
+     [0, 0, 0],
+     [0, 0, 0]]
 
 #Result (x,y,z) Matrix
 Z = [[0],
@@ -46,38 +51,47 @@ Z = [[0],
      [0]]
 
 def Main():
-    print("Linear Algebra Solver, see proof for translation between steps and procedures.\n")
-    printMatrix(AOrg, "Matrix A (Original)", True)
-    printMatrix(B, "Matrix B",  True)
-    printMatrix(Z, "Matrix Z", True)
+    print("Linear Algebra Solver")
+    print("The solver uses the MCAD method to reach a solution by finding the inverse of the original coefficients. \n")
+    
+    if (calcDet3x3(AOrg) == 0):
+        print("Matrix is not invertable, seek alternate method.")
+        end()
 
-    print("Determinant of A:",calcDet3x3(AOrg))
+    printMatrix(AOrg, "Matrix A (Original)", True, True)
+    printMatrix(B, "Matrix B",  True, True)
+    printMatrix(Z, "Matrix Z", True, True)
 
-    #PUSH INPUT THEN OUTPUT
+    print("Determinant of A: \n",calcDet3x3(AOrg),"\n")
+
     matrixOfMinors(AOrg, Am)
-    printMatrix(Am, "Matrix Am Result", True)
+    printMatrix(Am, "Matrix Am Result", True, True)
     
     Ac = cofactorsOfMinors(Am)
-    printMatrix(Ac, "Matrix Ac Result", True)
+    printMatrix(Ac, "Matrix Ac Result", True, True)
 
     transpose3x3(Ac)
-    printMatrix(At, "Matrix At Result", True)
+    printMatrix(At, "Matrix At Result", True, True)
+
+    multiplyMatrixByInteger(At, (1/calcDet3x3(AOrg)), Ai)
+    printMatrix(Ai, "Matrix At Multiplied by Int", True, False)
+
+    multiplyMatrices(Ai, B, Z)
+    printMatrix(Z, "Matrix Z Result", True, True)
     
     end()
 
 #Sub Procedures and Functions for System
+def multiplyMatrixByInteger(At, INT, Ai):
+    for x in range(len(At)):
+        for y in range(len(At)):
+            Ai[x][y] = (INT)*(At[x][y])
 
-def multiplyMatrixByInteger():
-    return
-
-def mutliplyMatrices():
-    # iterate through rows of X
-    for i in range(len(X)):
-        # iterate through columns of Y
-        for j in range(len(Y[0])):
-            # iterate through rows of Y
-            for k in range(len(Y)):
-                result[i][j] += X[i][k] * Y[k][j]
+def multiplyMatrices(A, B, Z):
+    for i in range(len(A)):
+        for j in range(len(B[0])):
+            for k in range(len(B)):
+                Z[i][j] += A[i][k] * B[k][j]
 
 def transpose3x3(Ac):
     for x in range(len(Ac)):
@@ -94,31 +108,22 @@ def matrixOfMinors(AOrg, Am):
         for y in range(len(AOrg)):
             if (x == 0 and y == 0):
                 Am[x][y] = calcDet2x2(AOrg[1][1], AOrg[1][2], AOrg[2][1], AOrg[2][2])
-                print(x,y,Am[x][y])
             elif (x == 0 and y == 1):
                 Am[x][y] = calcDet2x2(AOrg[1][0], AOrg[1][2], AOrg[2][0], AOrg[2][2])
-                print(x,y,Am[x][y])
             elif (x == 0 and y == 2):
                 Am[x][y] = calcDet2x2(AOrg[1][0], AOrg[1][1], AOrg[2][0], AOrg[2][1])
-                print(x,y,Am[x][y])
             elif (x == 1 and y == 0):
                 Am[x][y] = calcDet2x2(AOrg[0][1], AOrg[0][2], AOrg[2][1], AOrg[2][2])
-                print(x,y,Am[x][y])
             elif (x == 1 and y == 1):
                 Am[x][y] = calcDet2x2(AOrg[0][0], AOrg[0][2], AOrg[2][0], AOrg[2][2])
-                print(x,y,Am[x][y])
             elif (x == 1 and y == 2):
                 Am[x][y] = calcDet2x2(AOrg[0][0], AOrg[0][1], AOrg[2][0], AOrg[2][1])
-                print(x,y,Am[x][y])
             elif (x == 2 and y == 0):
                 Am[x][y] = calcDet2x2(AOrg[0][1], AOrg[0][2], AOrg[1][1], AOrg[1][2])
-                print(x,y,Am[x][y])
             elif (x == 2 and y == 1):
                 Am[x][y] = calcDet2x2(AOrg[0][0], AOrg[0][2], AOrg[1][0], AOrg[1][2])
-                print(x,y,Am[x][y])
             elif (x == 2 and y == 2):
                 Am[x][y] = calcDet2x2(AOrg[0][0], AOrg[0][1], AOrg[1][0], AOrg[1][1])
-                print(x,y,Am[x][y])
             else:
                 print("Vector Not Found")
 
@@ -130,9 +135,16 @@ def calcDet3x3(M):
 def calcDet2x2(a, b, c, d):
     return (a*d)-(b*c)
     
-def printMatrix(matrix, title, newLine):
+def printMatrix(matrix, title, newLine, rnd):
     print(title,":")
-    print('\n'.join([''.join(['{:4}'.format(item) for item in row]) for row in matrix]))
+    #Rounding is to be used for the majority of matrices, except where the decimal mutiplication takes place.
+    #Therefore, see the else statement for the m
+    if (rnd):
+        print('\n'.join([''.join(['{:4}'.format(int(round(item))) for item in row]) for row in matrix]))
+    else:
+        print("Values Rounded to 2 d.p.")
+        print('\n'.join([''.join(['{:6}'.format(round(item,2)) for item in row]) for row in matrix]))
+    
     if (newLine): print("")
 
 def end():
